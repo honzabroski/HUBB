@@ -794,73 +794,69 @@
             age: 0
         };
 
-        // Question bank
+        // Question bank - Pure IQ (no applied math, no verbal analogies)
         const questionBank = [
             // Easy Questions (warm-up)
-            { q: "Complete the sequence: 2, 4, 6, 8, ?", o: ["9", "10", "12", "14"], c: 2, d: 1, e: "Arithmetic progression: +2 each time" },
-            { q: "What is 20% of 50?", o: ["5", "10", "15", "20"], c: 1, d: 1, e: "50 × 0.2 = 10" },
-            { q: "5 + 3 × 2 = ?", o: ["16", "11", "13", "10"], c: 1, d: 1, e: "Order of operations: 5 + 6 = 11" },
+            { q: "Complete the sequence: 2, 4, 6, 8, ?", o: ["9", "10", "12", "14"], c: 2, d: 1, e: "Pattern adds 2 each time" },
+            { q: "Which number comes next: 5, 10, 15, 20, ?", o: ["22", "25", "30", "24"], c: 1, d: 1, e: "Pattern adds 5 each time" },
+            { q: "Complete: 1, 4, 9, 16, 25, ?", o: ["30", "36", "49", "35"], c: 1, d: 1, e: "Perfect squares: 6²=36" },
 
-            // Medium-Hard Questions (analytical focus)
+            // Medium Questions (analytical focus)
             { q: "Complete the series: 3, 6, 12, 24, ?", o: ["36", "48", "40", "32"], c: 1, d: 2, e: "Each number doubles" },
             { q: "What number should replace ?: 2, 5, 11, 23, ?", o: ["35", "47", "41", "45"], c: 1, d: 2, e: "Pattern: ×2 + 1" },
-            { q: "What comes next: 1, 1, 2, 3, 5, 8, ?", o: ["11", "13", "15", "12"], c: 1, d: 2, e: "Fibonacci: 5+8=13" },
+            { q: "What comes next: 1, 1, 2, 3, 5, 8, ?", o: ["11", "13", "15", "12"], c: 1, d: 2, e: "Fibonacci: each number is sum of previous two" },
             { q: "If 5 machines make 5 widgets in 5 minutes, how long for 100 machines to make 100 widgets?", o: ["5 min", "20 min", "100 min", "10 min"], c: 0, d: 2, e: "Each machine makes 1 widget in 5 min" },
             { q: "A bat and ball cost $1.10. The bat costs $1 more than the ball. How much is the ball?", o: ["$0.10", "$0.05", "$0.20", "$0.55"], c: 1, d: 2, e: "Ball=$0.05, Bat=$1.05" },
-            { q: "Complete: 1, 4, 9, 16, 25, ?", o: ["30", "36", "49", "35"], c: 1, d: 2, e: "Perfect squares: 6²=36" },
-            { q: "What is the next letter: A, C, F, J, O, ?", o: ["T", "U", "V", "S"], c: 1, d: 2, e: "Add 2,3,4,5,6: O+6=U" },
-            { q: "Which number doesn't belong: 2, 3, 5, 7, 9, 11?", o: ["2", "3", "9", "11"], c: 2, d: 2, e: "9 is not prime (3×3)" },
-            { q: "If you overtake the 2nd place runner, what place are you?", o: ["1st", "2nd", "3rd", "4th"], c: 1, d: 2, e: "You take their position" },
+            { q: "What is the next letter: A, C, F, J, O, ?", o: ["T", "U", "V", "S"], c: 1, d: 2, e: "Add 2,3,4,5,6 positions forward" },
+            { q: "Which number doesn't belong: 2, 3, 5, 7, 9, 11?", o: ["2", "3", "9", "11"], c: 2, d: 2, e: "9 is not prime, it equals 3×3" },
+            { q: "If you overtake the 2nd place runner, what place are you?", o: ["1st", "2nd", "3rd", "4th"], c: 1, d: 2, e: "You take their position: 2nd place" },
             { q: "Which is the odd one: 144, 256, 400, 484, 500?", o: ["144", "256", "500", "484"], c: 2, d: 2, e: "500 is not a perfect square" },
+            { q: "Pattern: 1, 3, 6, 10, 15, ?", o: ["18", "19", "20", "21"], c: 3, d: 2, e: "Add 2, then 3, then 4, then 5, then 6" },
 
             // Hard Questions (complex patterns and logic)
-            { q: "Find the pattern: 2, 6, 12, 20, 30, ?", o: ["40", "42", "44", "46"], c: 1, d: 3, e: "n(n+1): 6×7=42" },
-            { q: "What is the missing number: 3, 7, 15, 31, 63, ?", o: ["127", "125", "128", "126"], c: 0, d: 3, e: "Pattern: 2ⁿ - 1 (2⁷-1=127)" },
+            { q: "Find the pattern: 2, 6, 12, 20, 30, ?", o: ["40", "42", "44", "46"], c: 1, d: 3, e: "n×(n+1): 1×2, 2×3, 3×4, 4×5, 5×6, 6×7=42" },
+            { q: "What is the missing number: 3, 7, 15, 31, 63, ?", o: ["127", "125", "128", "126"], c: 0, d: 3, e: "Pattern: double and add 1 repeatedly" },
             { q: "Solve: 8, 15, 10, 13, 12, 11, 14, ?", o: ["7", "9", "16", "13"], c: 1, d: 3, e: "Two alternating sequences: (8,10,12,14) and (15,13,11,9)" },
-            { q: "If 3→9, 4→16, 5→25, then 6→?", o: ["30", "36", "42", "35"], c: 1, d: 3, e: "n² pattern: 6²=36" },
-            { q: "Complete: 1, 2, 6, 24, 120, ?", o: ["600", "720", "620", "520"], c: 1, d: 3, e: "Factorials: 6! = 720" },
-            { q: "Pattern: 5, 10, 20, 35, 55, ?", o: ["75", "80", "85", "90"], c: 1, d: 3, e: "Differences increase by 5: +5,+10,+15,+20,+25" },
-            { q: "Next in series: 1, 8, 27, 64, 125, ?", o: ["196", "216", "225", "256"], c: 1, d: 3, e: "Cubes: 6³=216" },
-            { q: "Find x: 2, 3, 5, 7, 11, 13, x, 19", o: ["15", "16", "17", "18"], c: 2, d: 3, e: "Prime numbers: 17" },
-            { q: "Pattern: 100, 96, 88, 72, 40, ?", o: ["-24", "-32", "8", "24"], c: 0, d: 3, e: "Subtract 4,8,16,32,64: 40-64=-24" },
-            { q: "In a race, you pass the person in 3rd place. What place are you now?", o: ["2nd", "3rd", "4th", "1st"], c: 1, d: 3, e: "You take 3rd place" },
-            { q: "If 2*3=10, 4*5=32, then 6*7=?", o: ["56", "58", "60", "62"], c: 1, d: 3, e: "Pattern: (a×b)+(a+b) = 42+13=55... closest is 58" },
+            { q: "Pattern: 1, 4, 2, 8, 3, 12, 4, ?", o: ["14", "16", "18", "20"], c: 1, d: 3, e: "Two sequences: (1,2,3,4) and (4,8,12,16)" },
+            { q: "Complete: 1, 2, 6, 24, 120, ?", o: ["600", "720", "620", "520"], c: 1, d: 3, e: "Each number multiplies by next integer: 1×2=2, 2×3=6, 3×4=24, 4×5=120, 5×6=720" },
+            { q: "Pattern: 5, 10, 20, 35, 55, ?", o: ["75", "80", "85", "90"], c: 1, d: 3, e: "Add 5, then 10, then 15, then 20, then 25" },
+            { q: "Next in series: 1, 8, 27, 64, 125, ?", o: ["196", "216", "225", "256"], c: 1, d: 3, e: "Cubes: 1³, 2³, 3³, 4³, 5³, 6³=216" },
+            { q: "Find x: 2, 3, 5, 7, 11, 13, x, 19", o: ["15", "16", "17", "18"], c: 2, d: 3, e: "Prime numbers in sequence" },
+            { q: "Pattern: 100, 96, 88, 72, 40, ?", o: ["-24", "-32", "8", "24"], c: 0, d: 3, e: "Subtract 4, then 8, then 16, then 32, then 64" },
+            { q: "In a race, you pass the person in 3rd place. What place are you now?", o: ["2nd", "3rd", "4th", "1st"], c: 1, d: 3, e: "You take their position: 3rd place" },
             { q: "A farmer had 15 sheep. All but 8 died. How many are left?", o: ["7", "8", "0", "15"], c: 1, d: 3, e: "'All but 8' means 8 survived" },
-            { q: "Complete: 1, 3, 7, 15, 31, ?", o: ["63", "62", "64", "61"], c: 0, d: 3, e: "Pattern: 2ⁿ-1: 2⁶-1=63" },
+            { q: "Complete: 1, 3, 7, 15, 31, ?", o: ["63", "62", "64", "61"], c: 0, d: 3, e: "Double and add 1: 1×2+1=3, 3×2+1=7, 7×2+1=15..." },
+            { q: "Pattern: 0, 1, 3, 7, 15, 31, ?", o: ["63", "62", "64", "65"], c: 0, d: 3, e: "Add powers of 2: +1, +2, +4, +8, +16, +32" },
 
             // Expert Questions (very challenging)
-            { q: "Sequence: 1, 11, 21, 1211, 111221, ?", o: ["312211", "31121", "13112221", "312213"], c: 0, d: 4, e: "Look-and-say: three 1s, two 2s, one 1 = 312211" },
-            { q: "If (x+y)² = x²+2xy+y², what is (a-b)²?", o: ["a²-b²", "a²-2ab+b²", "a²+2ab-b²", "a²-ab+b²"], c: 1, d: 4, e: "Algebraic expansion" },
-            { q: "A clock shows 3:15. What is the angle between hour and minute hands?", o: ["0°", "7.5°", "15°", "22.5°"], c: 1, d: 4, e: "Minute at 90°, hour at 97.5°: difference is 7.5°" },
-            { q: "Next: 2, 3, 5, 8, 12, 17, 23, ?", o: ["28", "29", "30", "31"], c: 2, d: 4, e: "Differences increase: +1,+2,+3,+4,+5,+6,+7" },
-            { q: "Matrix: if [2,4]→8 and [3,5]→15, what does [4,7]→?", o: ["28", "11", "21", "35"], c: 0, d: 4, e: "Multiply the numbers: 4×7=28" },
+            { q: "Sequence: 1, 11, 21, 1211, 111221, ?", o: ["312211", "31121", "13112221", "312213"], c: 0, d: 4, e: "Look-and-say: describe previous number (three 1s, two 2s, one 1)" },
+            { q: "Pattern: 2, 3, 5, 7, 11, 13, 17, 19, 23, ?", o: ["27", "29", "31", "25"], c: 1, d: 4, e: "Prime numbers: next prime after 23 is 29" },
+            { q: "Next: 2, 3, 5, 8, 12, 17, 23, ?", o: ["28", "29", "30", "31"], c: 2, d: 4, e: "Add 1, then 2, then 3, then 4, then 5, then 6, then 7" },
+            { q: "Pattern: 1, 2, 4, 8, 16, 31, 57, ?", o: ["99", "100", "101", "105"], c: 3, d: 4, e: "Maximum regions created by n points on circle: next is 105" },
             { q: "If 5 cats catch 5 mice in 5 days, how many days for 1 cat to catch 1 mouse?", o: ["1", "5", "25", "0.2"], c: 1, d: 4, e: "Each cat catches 1 mouse in 5 days" },
-            { q: "Pattern: 0, 1, 1, 2, 4, 7, 13, 24, ?", o: ["44", "43", "45", "42"], c: 0, d: 4, e: "Tribonacci: sum of last 3 numbers: 13+24+7=44" },
-            { q: "Find x: 1!+2!+3!+4! = x", o: ["10", "24", "33", "15"], c: 2, d: 4, e: "1+2+6+24=33" },
-            { q: "If √(x+5) = 4, what is x?", o: ["11", "16", "9", "21"], c: 0, d: 4, e: "Square both sides: x+5=16, so x=11" },
-            { q: "Pattern in base 2: 1, 10, 11, 100, 101, ?", o: ["110", "111", "1000", "1001"], c: 0, d: 4, e: "Binary counting: 110 (decimal 6)" },
-            { q: "Two dice rolled. What's the probability sum equals 7?", o: ["1/6", "1/12", "1/36", "1/8"], c: 0, d: 4, e: "6 favorable outcomes out of 36 total" },
-            { q: "If f(x)=2x+1 and g(x)=x², what is f(g(3))?", o: ["19", "18", "17", "20"], c: 0, d: 4, e: "g(3)=9, then f(9)=2(9)+1=19" },
-            { q: "A snail climbs 3m up a 10m wall each day, slides 2m down each night. How many days to reach the top?", o: ["8", "9", "10", "7"], c: 0, d: 4, e: "Day 8: climbs to 10m before sliding" },
-            { q: "If all A are B, and no B are C, can some A be C?", o: ["Yes", "No", "Maybe", "Insufficient info"], c: 1, d: 4, e: "Logically impossible: A→B and B∩C=∅" },
-            { q: "Complete: 1, 2, 4, 7, 11, 16, 22, ?", o: ["28", "29", "30", "27"], c: 1, d: 4, e: "Differences: +1,+2,+3,+4,+5,+6,+7" },
-            { q: "Three light switches outside a room control three bulbs inside. You can only enter once. How do you determine which switch controls which bulb?", o: ["Turn on 1st for 5 min, off, turn on 2nd, enter", "Turn all on", "Turn on randomly", "Cannot determine"], c: 0, d: 4, e: "Hot+off=1st, on=2nd, cold+off=3rd" },
-            { q: "A book has 500 pages. How many times does the digit 1 appear in page numbers?", o: ["200", "150", "300", "250"], c: 0, d: 4, e: "Count 1s in units, tens, hundreds places" },
-            { q: "If 1=3, 2=3, 3=5, 4=4, 5=4, then 6=?", o: ["3", "4", "5", "6"], c: 0, d: 4, e: "Count letters in number words: 'six' has 3 letters" },
-            { q: "Water lily patch doubles in size daily. Takes 48 days to cover a pond. How many days to cover half?", o: ["24", "47", "46", "25"], c: 1, d: 4, e: "If doubles daily, half-covered day before: day 47" },
-            { q: "You have 12 balls, one weighs different. Using a balance scale 3 times, how do you find it?", o: ["Divide 4-4-4, then 2-2", "Weigh pairs", "Weigh all", "Random"], c: 0, d: 4, e: "Classic balance problem: ternary search" },
-            { q: "Pattern: 2, 12, 36, 80, 150, ?", o: ["252", "240", "260", "248"], c: 0, d: 4, e: "n³+n²: 6³+6²=216+36=252" },
+            { q: "Pattern: 0, 1, 1, 2, 4, 7, 13, 24, ?", o: ["44", "43", "45", "42"], c: 0, d: 4, e: "Tribonacci: sum of previous 3 numbers" },
+            { q: "Series: 1, 1, 2, 6, 24, 120, ?", o: ["600", "720", "620", "520"], c: 1, d: 4, e: "Multiply by position: 1×1, 1×2, 2×3, 6×4, 24×5, 120×6" },
+            { q: "Pattern in binary: 1, 10, 11, 100, 101, ?", o: ["110", "111", "1000", "1001"], c: 0, d: 4, e: "Counting in base 2: next is 110 (6 in decimal)" },
+            { q: "A snail climbs 3m up a 10m wall each day, slides 2m down each night. How many days to reach top?", o: ["8", "9", "10", "7"], c: 0, d: 4, e: "Day 8: climbs to 10m before sliding back" },
+            { q: "If all A are B, and no B are C, can some A be C?", o: ["Yes", "No", "Maybe", "Insufficient info"], c: 1, d: 4, e: "Logically impossible: A must be B, and B cannot be C" },
+            { q: "Complete: 1, 2, 4, 7, 11, 16, 22, ?", o: ["28", "29", "30", "27"], c: 1, d: 4, e: "Add 1, then 2, then 3, then 4, then 5, then 6, then 7" },
+            { q: "Three switches control three bulbs in another room. You can only enter once. How to match them?", o: ["Turn on 1st for 5min, off it, turn on 2nd, enter", "Turn all on", "Turn on randomly", "Cannot determine"], c: 0, d: 4, e: "Check which is hot+off (1st), on (2nd), cold+off (3rd)" },
+            { q: "How many times does digit 1 appear in numbers 1-100?", o: ["20", "19", "11", "21"], c: 0, d: 4, e: "Count: 1,10,11,12,13,14,15,16,17,18,19,21,31,41,51,61,71,81,91,100" },
+            { q: "Pattern: 1=1, 2=3, 3=5, 4=4, 5=4, then 6=?", o: ["3", "4", "5", "6"], c: 0, d: 4, e: "Count letters in spelled number: 'six' has 3 letters" },
+            { q: "Water lily patch doubles daily. Takes 48 days to cover pond. Days to cover half?", o: ["24", "47", "46", "25"], c: 1, d: 4, e: "If it doubles daily, it was half-covered the day before: day 47" },
+            { q: "12 balls, one weighs different. Find it using balance scale 3 times. Strategy?", o: ["Divide 4-4-4, weigh groups", "Weigh pairs", "Weigh all", "Random"], c: 0, d: 4, e: "Divide into three groups of 4" },
+            { q: "Pattern: 2, 12, 36, 80, 150, ?", o: ["252", "240", "260", "248"], c: 0, d: 4, e: "n²×(n+1): 1²×2, 2²×3, 3²×4, 4²×5, 5²×6, 6²×7=252" },
             { q: "If it takes 5 people 5 hours to dig 5 holes, how long for 10 people to dig 10 holes?", o: ["10 hours", "5 hours", "2.5 hours", "20 hours"], c: 1, d: 4, e: "Each person digs 1 hole in 5 hours" },
-            { q: "In a tournament, 100 teams play single elimination. How many games to determine winner?", o: ["99", "100", "50", "98"], c: 0, d: 4, e: "Need 99 games to eliminate 99 teams" },
-            { q: "If MONDAY is coded as 141514425, what is FRIDAY?", o: ["6189425", "6189145", "6184925", "6914825"], c: 0, d: 4, e: "F=6, R=18, I=9, D=4, A=1, Y=25" },
-            { q: "A car travels 60 km at 30 km/h, then 60 km at 60 km/h. What's average speed?", o: ["40 km/h", "45 km/h", "50 km/h", "42 km/h"], c: 0, d: 4, e: "Total 120km in 3h = 40 km/h" },
-            { q: "How many squares (of any size) are on a standard 8×8 chessboard?", o: ["204", "64", "104", "144"], c: 0, d: 4, e: "8²+7²+6²+5²+4²+3²+2²+1²=204" },
-            { q: "If you write numbers 1-100, how many times do you write the digit 9?", o: ["20", "19", "11", "10"], c: 0, d: 4, e: "9,19,29...89,90-99: 20 times" },
-            { q: "Three boxes: gold, silver, bronze. Labels all wrong. Pick one coin from one box to label all correctly. Which?", o: ["Gold-Silver", "Bronze", "Gold", "Silver"], c: 0, d: 4, e: "Pick from 'Gold-Silver' box, it must be pure" },
-            { q: "In a group of 23 people, what's the probability 2 share a birthday?", o: [">50%", "<25%", "~33%", "Exactly 50%"], c: 0, d: 4, e: "Birthday paradox: ~50.7%" },
-            { q: "A rope ladder hangs from a boat. Rungs 20cm apart, bottom rung at water. Tide rises 40cm/hour. After 2 hours, how many more rungs submerged?", o: ["0", "2", "4", "1"], c: 0, d: 4, e: "Boat rises with tide - no change" },
-            { q: "Pattern: 1, 2, 6, 15, 31, 56, ?", o: ["92", "90", "94", "91"], c: 0, d: 4, e: "Differences of differences: +1,+4,+9,+16,+25,+36" },
-            { q: "If 3 hens lay 3 eggs in 3 days, how many eggs do 12 hens lay in 12 days?", o: ["48", "36", "12", "144"], c: 0, d: 4, e: "Each hen lays 1 egg per 3 days: 12×4=48" },
+            { q: "Tournament with 100 teams, single elimination. How many total games?", o: ["99", "100", "50", "98"], c: 0, d: 4, e: "Need 99 games to eliminate 99 teams, leaving 1 winner" },
+            { q: "Coded message: A=1, B=2, C=3... If MONDAY=141514425, what is FRIDAY?", o: ["6189425", "6189145", "6184925", "6914825"], c: 0, d: 4, e: "F=6, R=18, I=9, D=4, A=1, Y=25" },
+            { q: "How many squares total on 8×8 chessboard (all sizes)?", o: ["204", "64", "104", "144"], c: 0, d: 4, e: "Sum of squares: 8²+7²+6²+5²+4²+3²+2²+1²=204" },
+            { q: "Three boxes labeled wrong (gold, silver, bronze). Pick one coin from one box to fix all labels. Which?", o: ["Mixed box", "Bronze box", "Gold box", "Silver box"], c: 0, d: 4, e: "Pick from box labeled 'mixed' - must be pure" },
+            { q: "Rope ladder on boat, rungs 20cm apart. Bottom rung at water. Tide rises 40cm/hour. After 2 hours, how many more rungs underwater?", o: ["0", "2", "4", "1"], c: 0, d: 4, e: "Boat rises with tide - relative position unchanged" },
+            { q: "Pattern: 1, 2, 6, 15, 31, 56, ?", o: ["92", "90", "94", "91"], c: 0, d: 4, e: "Add triangular numbers: +1, +4, +9, +16, +25, +36" },
+            { q: "If 3 hens lay 3 eggs in 3 days, how many eggs do 12 hens lay in 12 days?", o: ["48", "36", "12", "144"], c: 0, d: 4, e: "Each hen lays 1 egg per 3 days, so 4 eggs in 12 days. 12×4=48" },
+            { q: "Pattern: 5, 11, 23, 47, 95, ?", o: ["190", "191", "189", "192"], c: 1, d: 4, e: "Double and add 1 each time" },
+            { q: "Complete: 1, 4, 10, 20, 35, 56, ?", o: ["84", "82", "80", "86"], c: 0, d: 4, e: "Tetrahedral numbers: cumulative sums of triangular numbers" },
+            { q: "Logic: If some A are B, and all B are C, must some A be C?", o: ["Yes", "No", "Maybe", "Cannot determine"], c: 0, d: 4, e: "If some A are B, and all B must be C, then those A must also be C" },
         ];
 
         // Game state
@@ -997,8 +993,22 @@
                 optionsContainer.appendChild(optionDiv);
             });
 
-            document.getElementById('prevBtn').style.display = currentQuestionIndex > 0 ? 'block' : 'none';
-            document.getElementById('nextBtn').textContent = currentQuestionIndex === questions.length - 1 ? 'Last Question →' : 'Next →';
+            // Update navigation buttons based on question position
+            const isLastQuestion = currentQuestionIndex === questions.length - 1;
+            const isFirstQuestion = currentQuestionIndex === 0;
+
+            document.getElementById('prevBtn').style.display = isFirstQuestion ? 'none' : 'block';
+
+            if (isLastQuestion) {
+                // Last question: hide Next and Skip buttons
+                document.getElementById('nextBtn').style.display = 'none';
+                document.querySelector('.nav-buttons button:nth-child(2)').style.display = 'none'; // Skip button
+            } else {
+                // Not last question: show all navigation
+                document.getElementById('nextBtn').style.display = 'block';
+                document.getElementById('nextBtn').textContent = 'Next →';
+                document.querySelector('.nav-buttons button:nth-child(2)').style.display = 'block'; // Skip button
+            }
         }
 
         function selectOption(index) {
