@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Test Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        h2 {
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        .question-image {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2em;
+            letter-spacing: 10px;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .iq-score {
+            font-size: 5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 30px 0;
+        }
+
+        .percentile {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .score-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+            font-size: 1.2em;
+        }
+
+        .question-review {
+            text-align: left;
+            margin-top: 40px;
+        }
+
+        .review-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e0e0e0;
+        }
+
+        .review-item.correct {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .review-item.incorrect {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .review-question {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .review-answer {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            .iq-score {
+                font-size: 3.5em;
+            }
+
+            .option {
+                padding: 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen active">
+            <h1>IQ Test Challenge</h1>
+            <p class="subtitle">
+                Test your cognitive abilities with 10 challenging questions covering logic, patterns, spatial reasoning, and more.
+                <br><br>
+                You'll receive an IQ score estimate based on your performance.
+                <br><br>
+                Take your time and choose the best answer for each question.
+            </p>
+            <button class="btn" onclick="startTest()">Begin Test</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="screen">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="question-counter">
+                Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+            </div>
+            <div id="questionContent">
+                <div class="question-text" id="questionText"></div>
+                <div class="question-image" id="questionImage"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn" style="display: none;">Previous</button>
+                <button class="btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen">
+            <div class="results-container">
+                <h1>Your Results</h1>
+                <div class="iq-score" id="iqScore">120</div>
+                <div class="percentile" id="percentile">Average Intelligence</div>
+                <div class="score-summary">
+                    You answered <span id="correctCount">0</span> out of 10 questions correctly
+                </div>
+
+                <div class="question-review">
+                    <h2>Question Review</h2>
+                    <div id="reviewContainer"></div>
+                </div>
+
+                <button class="btn" onclick="restartTest()">Take Test Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions database
+        const questions = [
+            {
+                question: "Complete the number series: 2, 6, 12, 20, 30, ?",
+                options: ["40", "42", "44", "46"],
+                correct: 1,
+                explanation: "Pattern: Add 4, 6, 8, 10, 12... (increasing by 2 each time)"
+            },
+            {
+                question: "Which word does NOT belong with the others?",
+                options: ["Rose", "Tulip", "Oak", "Daisy"],
+                correct: 2,
+                explanation: "Oak is a tree, while the others are flowers"
+            },
+            {
+                question: "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies.",
+                options: ["True", "False", "Cannot be determined", "Sometimes true"],
+                correct: 0,
+                explanation: "This is a valid logical syllogism (transitive property)"
+            },
+            {
+                question: "What number should replace the question mark?\n8, 15, 10, 13, 12, 11, 14, ?",
+                options: ["7", "9", "16", "13"],
+                correct: 1,
+                explanation: "Two alternating sequences: 8,10,12,14 (add 2) and 15,13,11,9 (subtract 2)"
+            },
+            {
+                question: "HAND is to GLOVE as FOOT is to:",
+                options: ["Shoe", "Sock", "Boot", "Sandal"],
+                correct: 1,
+                explanation: "A glove covers a hand closely, just as a sock covers a foot closely"
+            },
+            {
+                question: "In a certain code, COMPUTER is written as DPNQVUFS. How is SCIENCE written?",
+                options: ["TDJFODF", "TDJFMDF", "SCJFODF", "SDJFODF"],
+                correct: 0,
+                explanation: "Each letter is shifted one position forward in the alphabet"
+            },
+            {
+                question: "If you rearrange the letters 'CIFAIPC', you would have the name of a(n):",
+                options: ["City", "Ocean", "Country", "Animal"],
+                correct: 1,
+                explanation: "The letters spell PACIFIC (ocean)"
+            },
+            {
+                question: "Complete the pattern: 1, 1, 2, 3, 5, 8, 13, ?",
+                options: ["18", "19", "21", "24"],
+                correct: 2,
+                explanation: "Fibonacci sequence: each number is the sum of the previous two"
+            },
+            {
+                question: "Which number is the odd one out: 13, 17, 23, 27, 31, 37?",
+                options: ["13", "17", "27", "31"],
+                correct: 2,
+                explanation: "27 is not a prime number (divisible by 3 and 9), all others are prime"
+            },
+            {
+                question: "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+                options: ["$0.10", "$0.05", "$0.20", "$0.15"],
+                correct: 1,
+                explanation: "Ball = $0.05, Bat = $1.05. The bat costs $1.00 MORE, not $1.00 total"
+            }
+        ];
+
+        // Game state
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let selectedOption = null;
+
+        // Initialize
+        function startTest() {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            showScreen('quizScreen');
+            displayQuestion();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
+
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+
+            // Update question
+            document.getElementById('questionText').textContent = question.question;
+
+            // Clear and populate options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index);
+
+                // Restore previous selection
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionDiv.classList.add('selected');
+                }
+
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = currentQuestionIndex > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent =
+                currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+        }
+
+        function selectOption(index) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add new selection
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            userAnswers[currentQuestionIndex] = index;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function calculateIQ(correctAnswers) {
+            // IQ scoring algorithm
+            // 0-2 correct: 60-85 (Below Average)
+            // 3-4 correct: 86-99 (Low Average)
+            // 5-6 correct: 100-115 (Average)
+            // 7-8 correct: 116-130 (Above Average)
+            // 9-10 correct: 131-160 (Superior)
+
+            const scoreRanges = [
+                { min: 0, max: 2, iqMin: 60, iqMax: 85 },
+                { min: 3, max: 4, iqMin: 86, iqMax: 99 },
+                { min: 5, max: 6, iqMin: 100, iqMax: 115 },
+                { min: 7, max: 8, iqMin: 116, iqMax: 130 },
+                { min: 9, max: 10, iqMin: 131, iqMax: 160 }
+            ];
+
+            for (let range of scoreRanges) {
+                if (correctAnswers >= range.min && correctAnswers <= range.max) {
+                    const proportion = (correctAnswers - range.min) / (range.max - range.min);
+                    return Math.round(range.iqMin + (range.iqMax - range.iqMin) * proportion);
+                }
+            }
+
+            return 100; // Default
+        }
+
+        function getPercentileText(iq) {
+            if (iq < 70) return "Below Average";
+            if (iq < 85) return "Low Average";
+            if (iq < 100) return "Average (Lower Range)";
+            if (iq < 115) return "Average";
+            if (iq < 130) return "Above Average";
+            if (iq < 145) return "Superior";
+            return "Very Superior";
+        }
+
+        function showResults() {
+            // Calculate score
+            let correctCount = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer === questions[index].correct) {
+                    correctCount++;
+                }
+            });
+
+            const iq = calculateIQ(correctCount);
+            const percentile = getPercentileText(iq);
+
+            // Update results display
+            document.getElementById('iqScore').textContent = iq;
+            document.getElementById('percentile').textContent = percentile;
+            document.getElementById('correctCount').textContent = correctCount;
+
+            // Generate question review
+            const reviewContainer = document.getElementById('reviewContainer');
+            reviewContainer.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correct;
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}`;
+
+                const icon = isCorrect ? '✓' : '✗';
+                const userAnswerText = userAnswers[index] !== null
+                    ? question.options[userAnswers[index]]
+                    : 'No answer';
+
+                reviewItem.innerHTML = `
+                    <div class="review-question">
+                        <span class="icon">${icon}</span>
+                        Question ${index + 1}: ${question.question.substring(0, 60)}${question.question.length > 60 ? '...' : ''}
+                    </div>
+                    <div class="review-answer">
+                        Your answer: ${userAnswerText}<br>
+                        Correct answer: ${question.options[question.correct]}<br>
+                        <em>${question.explanation}</em>
+                    </div>
+                `;
+
+                reviewContainer.appendChild(reviewItem);
+            });
+
+            showScreen('resultsScreen');
+        }
+
+        function restartTest() {
+            startTest();
+        }
+    </script>
+</body>
+</html>
