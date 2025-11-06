@@ -656,7 +656,7 @@
             </div>
 
             <div class="intro-content">
-                <form id="introForm" onsubmit="return false;">
+                <form id="introForm">
                     <div class="form-group">
                         <label class="form-label">Your Name</label>
                         <input type="text" id="userName" class="form-input" placeholder="Enter your full name" required>
@@ -685,7 +685,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn" onclick="validateAndStart()">
+                    <button type="submit" class="btn">
                         Begin Assessment →
                     </button>
                 </form>
@@ -874,6 +874,17 @@
         let totalTimeSeconds = 25 * 60;
         let timerInterval;
         let questionStartTime;
+
+        // Setup form submission handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('introForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    validateAndStart();
+                });
+            }
+        });
 
         function validateAndStart() {
             const name = document.getElementById('userName').value.trim();
