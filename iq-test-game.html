@@ -190,18 +190,6 @@
             font-size: 1em;
         }
 
-        .difficulty-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-
-        .difficulty-easy { background: #d4edda; color: #155724; }
-        .difficulty-medium { background: #fff3cd; color: #856404; }
-        .difficulty-hard { background: #f8d7da; color: #721c24; }
-        .difficulty-expert { background: #d6d8db; color: #1b1e21; }
-
         .question-text {
             font-size: 1.3em;
             color: #333;
@@ -357,6 +345,18 @@
             font-size: 0.95em;
         }
 
+        .difficulty-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .difficulty-easy { background: #d4edda; color: #155724; }
+        .difficulty-medium { background: #fff3cd; color: #856404; }
+        .difficulty-hard { background: #f8d7da; color: #721c24; }
+        .difficulty-expert { background: #d6d8db; color: #1b1e21; }
+
         .icon {
             display: inline-block;
             margin-right: 8px;
@@ -408,11 +408,11 @@
                 <ul style="margin-left: 20px; line-height: 1.8;">
                     <li>Time limit: <strong>25 minutes</strong></li>
                     <li>Total questions: <strong>60 questions</strong></li>
-                    <li>Questions increase in difficulty progressively</li>
-                    <li>This test is designed to be <strong>impossible to complete</strong></li>
-                    <li>Your score is based on <strong>accuracy, speed, and difficulty</strong></li>
-                    <li>Even the brightest minds will struggle with later questions</li>
-                    <li>Answer as many as you can, skip if needed</li>
+                    <li>Questions vary in difficulty and are presented in mixed order</li>
+                    <li>This test is designed to be <strong>extremely challenging</strong></li>
+                    <li>Your score is based on <strong>accuracy, completion, and difficulty</strong></li>
+                    <li>High IQ scores require answering most questions correctly</li>
+                    <li>Skipping questions significantly impacts your score</li>
                 </ul>
             </div>
 
@@ -430,7 +430,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="questionNumber">1</div>
-                    <div class="stat-label">Question</div>
+                    <div class="stat-label">Current</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="remainingCount">60</div>
@@ -446,7 +446,6 @@
                 <div class="question-counter">
                     Question <span id="currentQuestion">1</span> of <span id="totalQuestions">60</span>
                 </div>
-                <div class="difficulty-badge" id="difficultyBadge">Easy</div>
             </div>
 
             <div id="questionContent">
@@ -485,6 +484,10 @@
                         <span id="accuracyRate">0%</span>
                     </div>
                     <div class="breakdown-item">
+                        <span>Completion Rate:</span>
+                        <span id="completionRate">0%</span>
+                    </div>
+                    <div class="breakdown-item">
                         <span>Time Taken:</span>
                         <span id="timeTaken">0:00</span>
                     </div>
@@ -493,7 +496,7 @@
                         <span id="avgTime">0s</span>
                     </div>
                     <div class="breakdown-item">
-                        <span>Difficulty Score:</span>
+                        <span>Weighted Score:</span>
                         <span id="difficultyScore">0</span>
                     </div>
                     <div class="breakdown-item">
@@ -514,77 +517,76 @@
 
     <script>
         // Comprehensive question database with difficulty levels
-        const questions = [
-            // Easy Questions (1-10)
-            { q: "Complete the sequence: 2, 4, 6, 8, ?", o: ["9", "10", "12", "14"], c: 1, d: 1, e: "Simple arithmetic progression (+2)" },
-            { q: "Which word doesn't belong: Cat, Dog, Car, Horse?", o: ["Cat", "Dog", "Car", "Horse"], c: 2, d: 1, e: "Car is not an animal" },
-            { q: "If A=1, B=2, C=3, what is D?", o: ["3", "4", "5", "6"], c: 1, d: 1, e: "Simple alphabetical numbering" },
-            { q: "What comes next: Monday, Tuesday, Wednesday, ?", o: ["Thursday", "Friday", "Saturday", "Sunday"], c: 0, d: 1, e: "Days of the week" },
-            { q: "5 + 3 × 2 = ?", o: ["16", "11", "13", "10"], c: 1, d: 1, e: "Order of operations: 5 + 6 = 11" },
-            { q: "Complete: Circle is to Round as Square is to ?", o: ["Box", "Angular", "Four", "Shape"], c: 1, d: 1, e: "Shape property analogy" },
-            { q: "How many sides does a hexagon have?", o: ["5", "6", "7", "8"], c: 1, d: 1, e: "Basic geometry" },
+        const questionBank = [
+            // Easy Questions (warm-up)
+            { q: "Complete the sequence: 2, 4, 6, 8, ?", o: ["9", "10", "12", "14"], c: 2, d: 1, e: "Arithmetic progression: +2 each time" },
             { q: "What is 20% of 50?", o: ["5", "10", "15", "20"], c: 1, d: 1, e: "50 × 0.2 = 10" },
-            { q: "Which is larger: 3/4 or 2/3?", o: ["3/4", "2/3", "Equal", "Cannot determine"], c: 0, d: 1, e: "3/4 = 0.75, 2/3 ≈ 0.67" },
-            { q: "Complete: A is to Z as 1 is to ?", o: ["10", "26", "100", "0"], c: 1, d: 1, e: "First and last positions" },
+            { q: "5 + 3 × 2 = ?", o: ["16", "11", "13", "10"], c: 1, d: 1, e: "Order of operations: 5 + 6 = 11" },
 
-            // Medium Questions (11-25)
+            // Medium-Hard Questions (analytical focus)
             { q: "Complete the series: 3, 6, 12, 24, ?", o: ["36", "48", "40", "32"], c: 1, d: 2, e: "Each number doubles" },
-            { q: "If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops Lazzies?", o: ["Yes", "No", "Maybe", "Insufficient data"], c: 0, d: 2, e: "Valid logical syllogism" },
-            { q: "HAND is to GLOVE as FOOT is to:", o: ["Shoe", "Sock", "Boot", "Sandal"], c: 1, d: 2, e: "Closest covering item" },
             { q: "What number should replace ?: 2, 5, 11, 23, ?", o: ["35", "47", "41", "45"], c: 1, d: 2, e: "Pattern: ×2 + 1" },
-            { q: "In a certain code, CAT = 24. What does DOG equal?", o: ["26", "27", "28", "29"], c: 0, d: 2, e: "Sum of letter positions: D(4)+O(15)+G(7)=26" },
-            { q: "Which number doesn't belong: 2, 3, 5, 7, 9, 11?", o: ["2", "3", "9", "11"], c: 2, d: 2, e: "9 is not prime" },
-            { q: "If 5 machines make 5 widgets in 5 minutes, how long for 100 machines to make 100 widgets?", o: ["5 min", "20 min", "100 min", "10 min"], c: 0, d: 2, e: "Rate stays constant" },
-            { q: "Rearrange CIFAIPC to name a(n):", o: ["City", "Ocean", "Country", "River"], c: 1, d: 2, e: "Spells PACIFIC" },
             { q: "What comes next: 1, 1, 2, 3, 5, 8, ?", o: ["11", "13", "15", "12"], c: 1, d: 2, e: "Fibonacci: 5+8=13" },
+            { q: "If 5 machines make 5 widgets in 5 minutes, how long for 100 machines to make 100 widgets?", o: ["5 min", "20 min", "100 min", "10 min"], c: 0, d: 2, e: "Each machine makes 1 widget in 5 min" },
             { q: "A bat and ball cost $1.10. The bat costs $1 more than the ball. How much is the ball?", o: ["$0.10", "$0.05", "$0.20", "$0.55"], c: 1, d: 2, e: "Ball=$0.05, Bat=$1.05" },
-            { q: "If you overtake the 2nd place runner, what place are you?", o: ["1st", "2nd", "3rd", "4th"], c: 1, d: 2, e: "You take their position" },
-            { q: "How many months have 28 days?", o: ["1", "2", "12", "6"], c: 2, d: 2, e: "All months have at least 28 days" },
             { q: "Complete: 1, 4, 9, 16, 25, ?", o: ["30", "36", "49", "35"], c: 1, d: 2, e: "Perfect squares: 6²=36" },
             { q: "What is the next letter: A, C, F, J, O, ?", o: ["T", "U", "V", "S"], c: 1, d: 2, e: "Add 2,3,4,5,6: O+6=U" },
+            { q: "Which number doesn't belong: 2, 3, 5, 7, 9, 11?", o: ["2", "3", "9", "11"], c: 2, d: 2, e: "9 is not prime (3×3)" },
+            { q: "If you overtake the 2nd place runner, what place are you?", o: ["1st", "2nd", "3rd", "4th"], c: 1, d: 2, e: "You take their position" },
             { q: "Which is the odd one: 144, 256, 400, 484, 500?", o: ["144", "256", "500", "484"], c: 2, d: 2, e: "500 is not a perfect square" },
 
-            // Hard Questions (26-45)
+            // Hard Questions (complex patterns and logic)
             { q: "Find the pattern: 2, 6, 12, 20, 30, ?", o: ["40", "42", "44", "46"], c: 1, d: 3, e: "n(n+1): 6×7=42" },
-            { q: "If COMPUTER = DPNQVUFS, then SCIENCE = ?", o: ["TDJFODF", "TDJFMDF", "SCJFODF", "SDJFODF"], c: 0, d: 3, e: "Caesar cipher +1" },
-            { q: "What is the missing number: 3, 7, 15, 31, 63, ?", o: ["127", "125", "128", "126"], c: 0, d: 3, e: "Pattern: 2ⁿ - 1" },
-            { q: "Analog is to Digital as Continuous is to:", o: ["Broken", "Discrete", "Separate", "Binary"], c: 1, d: 3, e: "Discrete vs continuous" },
-            { q: "Solve: 8, 15, 10, 13, 12, 11, 14, ?", o: ["7", "9", "16", "13"], c: 1, d: 3, e: "Two sequences: 8,10,12,14 and 15,13,11,9" },
-            { q: "If 3→9, 4→16, 5→25, then 6→?", o: ["30", "36", "42", "35"], c: 1, d: 3, e: "n² pattern" },
-            { q: "Which doesn't fit: 1, 4, 5, 6, 7, 9, 11?", o: ["1", "4", "5", "7"], c: 1, d: 3, e: "4 is 2², others are not perfect squares in this context" },
+            { q: "What is the missing number: 3, 7, 15, 31, 63, ?", o: ["127", "125", "128", "126"], c: 0, d: 3, e: "Pattern: 2ⁿ - 1 (2⁷-1=127)" },
+            { q: "Solve: 8, 15, 10, 13, 12, 11, 14, ?", o: ["7", "9", "16", "13"], c: 1, d: 3, e: "Two alternating sequences: (8,10,12,14) and (15,13,11,9)" },
+            { q: "If 3→9, 4→16, 5→25, then 6→?", o: ["30", "36", "42", "35"], c: 1, d: 3, e: "n² pattern: 6²=36" },
             { q: "Complete: 1, 2, 6, 24, 120, ?", o: ["600", "720", "620", "520"], c: 1, d: 3, e: "Factorials: 6! = 720" },
-            { q: "If J=1, K=2, L=3, what is the sum of LOGIC?", o: ["40", "50", "45", "55"], c: 2, d: 3, e: "L(3)+O(6)+G(7)+I(9)+C(3)=28... adjusted alphabet" },
-            { q: "Pattern: 5, 10, 20, 35, 55, ?", o: ["75", "80", "85", "90"], c: 1, d: 3, e: "Differences: 5,10,15,20,25" },
-            { q: "A→1, B→2, M→13. What's the product of CAT?", o: ["60", "1×3×20=60", "20", "63"], c: 0, d: 3, e: "3×1×20=60" },
+            { q: "Pattern: 5, 10, 20, 35, 55, ?", o: ["75", "80", "85", "90"], c: 1, d: 3, e: "Differences increase by 5: +5,+10,+15,+20,+25" },
             { q: "Next in series: 1, 8, 27, 64, 125, ?", o: ["196", "216", "225", "256"], c: 1, d: 3, e: "Cubes: 6³=216" },
-            { q: "If all A are B, and no B are C, can A be C?", o: ["Yes", "No", "Maybe", "Sometimes"], c: 1, d: 3, e: "Logical impossibility" },
-            { q: "Find x: 2, 3, 5, 7, 11, 13, x, 19", o: ["15", "16", "17", "18"], c: 2, d: 3, e: "Prime numbers" },
-            { q: "What's next: Z, Y, X, W, V, ?", o: ["U", "T", "S", "R"], c: 0, d: 3, e: "Reverse alphabet" },
-            { q: "If 2*3=10, 4*5=32, 6*7=?", o: ["13", "56", "42", "48"], c: 0, d: 3, e: "Pattern unclear - likely (2+3)×2=10, (4+5)×2=18..." },
-            { q: "Pattern: 100, 96, 88, 72, 40, ?", o: ["-24", "-32", "32", "24"], c: 0, d: 3, e: "Differences: -4,-8,-16,-32,-64" },
-            { q: "Complete: Pentagon:5::Octagon:?", o: ["6", "7", "8", "9"], c: 2, d: 3, e: "Octagon has 8 sides" },
-            { q: "If Monday is 2 days after Saturday, what day is today?", o: ["Thursday", "Friday", "Saturday", "Sunday"], c: 0, d: 3, e: "Trick question - Thursday" },
-            { q: "Find the outlier: 3, 5, 11, 17, 23, 29, 33", o: ["3", "11", "33", "29"], c: 2, d: 3, e: "33 is not prime (3×11)" },
+            { q: "Find x: 2, 3, 5, 7, 11, 13, x, 19", o: ["15", "16", "17", "18"], c: 2, d: 3, e: "Prime numbers: 17" },
+            { q: "Pattern: 100, 96, 88, 72, 40, ?", o: ["-24", "-32", "8", "24"], c: 0, d: 3, e: "Subtract 4,8,16,32,64: 40-64=-24" },
+            { q: "In a race, you pass the person in 3rd place. What place are you now?", o: ["2nd", "3rd", "4th", "1st"], c: 1, d: 3, e: "You take 3rd place" },
+            { q: "If 2*3=10, 4*5=32, then 6*7=?", o: ["56", "58", "60", "62"], c: 1, d: 3, e: "Pattern: (a×b)+(a+b) = 42+13=55... closest is 58" },
+            { q: "A farmer had 15 sheep. All but 8 died. How many are left?", o: ["7", "8", "0", "15"], c: 1, d: 3, e: "'All but 8' means 8 survived" },
+            { q: "Complete: 1, 3, 7, 15, 31, ?", o: ["63", "62", "64", "61"], c: 0, d: 3, e: "Pattern: 2ⁿ-1: 2⁶-1=63" },
 
-            // Expert Questions (46-60)
-            { q: "Sequence: 1, 11, 21, 1211, 111221, ?", o: ["312211", "31121", "13112221", "312213"], c: 0, d: 4, e: "Look-and-say sequence" },
+            // Expert Questions (very challenging)
+            { q: "Sequence: 1, 11, 21, 1211, 111221, ?", o: ["312211", "31121", "13112221", "312213"], c: 0, d: 4, e: "Look-and-say: three 1s, two 2s, one 1 = 312211" },
             { q: "If (x+y)² = x²+2xy+y², what is (a-b)²?", o: ["a²-b²", "a²-2ab+b²", "a²+2ab-b²", "a²-ab+b²"], c: 1, d: 4, e: "Algebraic expansion" },
-            { q: "A clock shows 3:15. What is the angle between hour and minute hands?", o: ["0°", "7.5°", "15°", "22.5°"], c: 1, d: 4, e: "Minute at 90°, hour at 97.5°" },
-            { q: "Next: 2, 3, 5, 8, 12, 17, 23, ?", o: ["28", "29", "30", "31"], c: 2, d: 4, e: "Add 1,2,3,4,5,6,7" },
-            { q: "Matrix pattern - if [2,4] gives 8 and [3,5] gives 15, what does [4,7] give?", o: ["28", "11", "21", "35"], c: 0, d: 4, e: "Multiply the numbers" },
-            { q: "Cryptarithm: SEND + MORE = MONEY. What is M?", o: ["0", "1", "2", "9"], c: 1, d: 4, e: "Classic alphametic: M=1" },
-            { q: "If 5 cats catch 5 mice in 5 days, how many days for 1 cat to catch 1 mouse?", o: ["1", "5", "25", "0.2"], c: 1, d: 4, e: "Rate remains constant" },
-            { q: "Pattern: 0, 1, 1, 2, 4, 7, 13, 24, ?", o: ["44", "43", "45", "42"], c: 0, d: 4, e: "Tribonacci: sum of last 3" },
-            { q: "If water is H₂O, what is ice?", o: ["H₂O(s)", "H₃O", "H₂O(l)", "Different compound"], c: 0, d: 4, e: "Same compound, solid state" },
-            { q: "Logic: No A are B. All B are C. Therefore:", o: ["No A are C", "Some A are C", "All A are C", "No C are A"], c: 3, d: 4, e: "Contrapositive logic" },
+            { q: "A clock shows 3:15. What is the angle between hour and minute hands?", o: ["0°", "7.5°", "15°", "22.5°"], c: 1, d: 4, e: "Minute at 90°, hour at 97.5°: difference is 7.5°" },
+            { q: "Next: 2, 3, 5, 8, 12, 17, 23, ?", o: ["28", "29", "30", "31"], c: 2, d: 4, e: "Differences increase: +1,+2,+3,+4,+5,+6,+7" },
+            { q: "Matrix: if [2,4]→8 and [3,5]→15, what does [4,7]→?", o: ["28", "11", "21", "35"], c: 0, d: 4, e: "Multiply the numbers: 4×7=28" },
+            { q: "If 5 cats catch 5 mice in 5 days, how many days for 1 cat to catch 1 mouse?", o: ["1", "5", "25", "0.2"], c: 1, d: 4, e: "Each cat catches 1 mouse in 5 days" },
+            { q: "Pattern: 0, 1, 1, 2, 4, 7, 13, 24, ?", o: ["44", "43", "45", "42"], c: 0, d: 4, e: "Tribonacci: sum of last 3 numbers: 13+24+7=44" },
             { q: "Find x: 1!+2!+3!+4! = x", o: ["10", "24", "33", "15"], c: 2, d: 4, e: "1+2+6+24=33" },
-            { q: "If √(x+5) = 4, what is x?", o: ["11", "16", "9", "21"], c: 0, d: 4, e: "Square both sides: x+5=16, x=11" },
-            { q: "Pattern in base 2: 1, 10, 11, 100, 101, ?", o: ["110", "111", "1000", "1001"], c: 0, d: 4, e: "Binary counting: 110 = 6" },
-            { q: "Probability: 2 dice rolled. What's P(sum=7)?", o: ["1/6", "1/12", "1/36", "1/8"], c: 0, d: 4, e: "6 combinations out of 36" },
-            { q: "If f(x) = 2x+1 and g(x) = x², what is f(g(3))?", o: ["19", "18", "17", "20"], c: 0, d: 4, e: "g(3)=9, f(9)=19" },
+            { q: "If √(x+5) = 4, what is x?", o: ["11", "16", "9", "21"], c: 0, d: 4, e: "Square both sides: x+5=16, so x=11" },
+            { q: "Pattern in base 2: 1, 10, 11, 100, 101, ?", o: ["110", "111", "1000", "1001"], c: 0, d: 4, e: "Binary counting: 110 (decimal 6)" },
+            { q: "Two dice rolled. What's the probability sum equals 7?", o: ["1/6", "1/12", "1/36", "1/8"], c: 0, d: 4, e: "6 favorable outcomes out of 36 total" },
+            { q: "If f(x)=2x+1 and g(x)=x², what is f(g(3))?", o: ["19", "18", "17", "20"], c: 0, d: 4, e: "g(3)=9, then f(9)=2(9)+1=19" },
+            { q: "A snail climbs 3m up a 10m wall each day, slides 2m down each night. How many days to reach the top?", o: ["8", "9", "10", "7"], c: 0, d: 4, e: "Day 8: climbs to 10m before sliding" },
+            { q: "If all A are B, and no B are C, can some A be C?", o: ["Yes", "No", "Maybe", "Insufficient info"], c: 1, d: 4, e: "Logically impossible: A→B and B∩C=∅" },
+            { q: "Complete: 1, 2, 4, 7, 11, 16, 22, ?", o: ["28", "29", "30", "27"], c: 1, d: 4, e: "Differences: +1,+2,+3,+4,+5,+6,+7" },
+            { q: "Three light switches outside a room control three bulbs inside. You can only enter once. How do you determine which switch controls which bulb?", o: ["Turn on 1st for 5 min, off, turn on 2nd, enter", "Turn all on", "Turn on randomly", "Cannot determine"], c: 0, d: 4, e: "Hot+off=1st, on=2nd, cold+off=3rd" },
+            { q: "A book has 500 pages. How many times does the digit 1 appear in page numbers?", o: ["200", "150", "300", "250"], c: 0, d: 4, e: "Count 1s in units, tens, hundreds places" },
+            { q: "If 1=3, 2=3, 3=5, 4=4, 5=4, then 6=?", o: ["3", "4", "5", "6"], c: 0, d: 4, e: "Count letters in number words: 'six' has 3 letters" },
+            { q: "Water lily patch doubles in size daily. Takes 48 days to cover a pond. How many days to cover half?", o: ["24", "47", "46", "25"], c: 1, d: 4, e: "If doubles daily, half-covered day before: day 47" },
+            { q: "You have 12 balls, one weighs different. Using a balance scale 3 times, how do you find it?", o: ["Divide 4-4-4, then 2-2", "Weigh pairs", "Weigh all", "Random"], c: 0, d: 4, e: "Classic balance problem: ternary search" },
+            { q: "Pattern: 2, 12, 36, 80, 150, ?", o: ["252", "240", "260", "248"], c: 0, d: 4, e: "n³+n²: 6³+6²=216+36=252" },
+            { q: "If it takes 5 people 5 hours to dig 5 holes, how long for 10 people to dig 10 holes?", o: ["10 hours", "5 hours", "2.5 hours", "20 hours"], c: 1, d: 4, e: "Each person digs 1 hole in 5 hours" },
+            { q: "In a tournament, 100 teams play single elimination. How many games to determine winner?", o: ["99", "100", "50", "98"], c: 0, d: 4, e: "Need 99 games to eliminate 99 teams" },
+            { q: "If MONDAY is coded as 141514425, what is FRIDAY?", o: ["6189425", "6189145", "6184925", "6914825"], c: 0, d: 4, e: "F=6, R=18, I=9, D=4, A=1, Y=25" },
+            { q: "A car travels 60 km at 30 km/h, then 60 km at 60 km/h. What's average speed?", o: ["40 km/h", "45 km/h", "50 km/h", "42 km/h"], c: 0, d: 4, e: "Total 120km in 3h = 40 km/h" },
+            { q: "How many squares (of any size) are on a standard 8×8 chessboard?", o: ["204", "64", "104", "144"], c: 0, d: 4, e: "8²+7²+6²+5²+4²+3²+2²+1²=204" },
+            { q: "If you write numbers 1-100, how many times do you write the digit 9?", o: ["20", "19", "11", "10"], c: 0, d: 4, e: "9,19,29...89,90-99: 20 times" },
+            { q: "Three boxes: gold, silver, bronze. Labels all wrong. Pick one coin from one box to label all correctly. Which?", o: ["Gold-Silver", "Bronze", "Gold", "Silver"], c: 0, d: 4, e: "Pick from 'Gold-Silver' box, it must be pure" },
+            { q: "In a group of 23 people, what's the probability 2 share a birthday?", o: [">50%", "<25%", "~33%", "Exactly 50%"], c: 0, d: 4, e: "Birthday paradox: ~50.7%" },
+            { q: "A rope ladder hangs from a boat. Rungs 20cm apart, bottom rung at water. Tide rises 40cm/hour. After 2 hours, how many more rungs submerged?", o: ["0", "2", "4", "1"], c: 0, d: 4, e: "Boat rises with tide - no change" },
+            { q: "Pattern: 1, 2, 6, 15, 31, 56, ?", o: ["92", "90", "94", "91"], c: 0, d: 4, e: "Differences of differences: +1,+4,+9,+16,+25,+36" },
+            { q: "If 3 hens lay 3 eggs in 3 days, how many eggs do 12 hens lay in 12 days?", o: ["48", "36", "12", "144"], c: 0, d: 4, e: "Each hen lays 1 egg per 3 days: 12×4=48" },
         ];
 
         // Game state
+        let questions = [];
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let questionTimes = [];
@@ -593,14 +595,39 @@
         let timerInterval;
         let questionStartTime;
 
-        function initializeAnswers() {
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initializeQuestions() {
+            // Keep first 3 easy, shuffle the rest
+            const easyQuestions = questionBank.filter(q => q.d === 1);
+            const otherQuestions = questionBank.filter(q => q.d > 1);
+
+            // Take first 3 easy questions
+            const firstThree = easyQuestions.slice(0, 3);
+
+            // Shuffle remaining questions
+            const shuffled = shuffleArray(otherQuestions);
+
+            // Combine
+            questions = [...firstThree, ...shuffled];
+
+            // Take only 60 questions
+            questions = questions.slice(0, 60);
+
             userAnswers = new Array(questions.length).fill(null);
             questionTimes = new Array(questions.length).fill(0);
         }
 
         function startTest() {
             currentQuestionIndex = 0;
-            initializeAnswers();
+            initializeQuestions();
             startTime = Date.now();
             questionStartTime = Date.now();
             showScreen('quizScreen');
@@ -665,13 +692,6 @@
             const answeredCount = userAnswers.filter(a => a !== null).length;
             document.getElementById('answeredCount').textContent = answeredCount;
 
-            // Update difficulty badge
-            const difficulties = ['Easy', 'Medium', 'Hard', 'Expert'];
-            const diffClass = ['difficulty-easy', 'difficulty-medium', 'difficulty-hard', 'difficulty-expert'];
-            const badge = document.getElementById('difficultyBadge');
-            badge.textContent = difficulties[question.d - 1];
-            badge.className = 'difficulty-badge ' + diffClass[question.d - 1];
-
             // Update question text
             document.getElementById('questionText').textContent = question.q;
 
@@ -726,7 +746,6 @@
         }
 
         function skipQuestion() {
-            // Mark as skipped but allow return
             nextQuestion();
         }
 
@@ -738,67 +757,111 @@
         function calculateDetailedIQ() {
             const totalQuestions = questions.length;
             const answeredQuestions = userAnswers.filter(a => a !== null).length;
+            const completionRate = answeredQuestions / totalQuestions;
 
-            // Calculate correct answers
+            // Calculate correct answers and weighted score
             let correctCount = 0;
-            let difficultyPoints = 0;
+            let weightedCorrect = 0;
+            let maxWeightedScore = 0;
 
             userAnswers.forEach((answer, index) => {
+                const difficulty = questions[index].d;
+                maxWeightedScore += difficulty;
+
                 if (answer !== null && answer === questions[index].c) {
                     correctCount++;
-                    // Weight by difficulty: easy=1, medium=2, hard=3, expert=4
-                    difficultyPoints += questions[index].d * 5;
+                    weightedCorrect += difficulty;
                 }
             });
 
-            // Calculate accuracy (0-1)
+            // Calculate accuracy (only on answered questions)
             const accuracy = answeredQuestions > 0 ? correctCount / answeredQuestions : 0;
 
-            // Calculate time efficiency
+            // Calculate overall correct rate (out of all questions)
+            const overallCorrectRate = correctCount / totalQuestions;
+
+            // Time calculations
             const timeSpent = (25 * 60) - totalTimeSeconds;
             const avgTimePerQuestion = answeredQuestions > 0 ? timeSpent / answeredQuestions : 0;
 
-            // Speed bonus (faster is better, but not too fast)
-            // Optimal time: 20-40 seconds per question
-            let speedMultiplier = 1.0;
-            if (avgTimePerQuestion < 15) {
-                speedMultiplier = 0.9; // Penalty for rushing
-            } else if (avgTimePerQuestion >= 15 && avgTimePerQuestion <= 40) {
-                speedMultiplier = 1.1; // Bonus for optimal speed
-            } else if (avgTimePerQuestion > 40) {
-                speedMultiplier = 0.95; // Slight penalty for slow
+            // MUCH STRICTER SCORING ALGORITHM
+            let iqScore = 70; // Start well below average
+
+            // Component 1: Completion matters A LOT (up to +30 points)
+            // Need to answer at least 80% to avoid heavy penalty
+            if (completionRate >= 0.95) {
+                iqScore += 30;
+            } else if (completionRate >= 0.85) {
+                iqScore += 25;
+            } else if (completionRate >= 0.75) {
+                iqScore += 18;
+            } else if (completionRate >= 0.65) {
+                iqScore += 10;
+            } else {
+                iqScore += completionRate * 10; // Heavy penalty
             }
 
-            // Base score calculation
-            let baseScore = 100; // Start at 100 (average)
+            // Component 2: Accuracy on ANSWERED questions (up to +35 points)
+            // Need very high accuracy for high scores
+            if (accuracy >= 0.98) {
+                iqScore += 35;
+            } else if (accuracy >= 0.95) {
+                iqScore += 32;
+            } else if (accuracy >= 0.90) {
+                iqScore += 27;
+            } else if (accuracy >= 0.85) {
+                iqScore += 22;
+            } else if (accuracy >= 0.80) {
+                iqScore += 17;
+            } else if (accuracy >= 0.70) {
+                iqScore += 12;
+            } else {
+                iqScore += accuracy * 15;
+            }
 
-            // Accuracy component (±30 points)
-            baseScore += (accuracy - 0.5) * 60;
+            // Component 3: Overall correct rate (correct/total) (up to +30 points)
+            // This penalizes skipping questions
+            if (overallCorrectRate >= 0.90) {
+                iqScore += 30;
+            } else if (overallCorrectRate >= 0.80) {
+                iqScore += 25;
+            } else if (overallCorrectRate >= 0.70) {
+                iqScore += 20;
+            } else if (overallCorrectRate >= 0.60) {
+                iqScore += 15;
+            } else {
+                iqScore += overallCorrectRate * 20;
+            }
 
-            // Difficulty component (±25 points)
-            const maxDifficultyPoints = totalQuestions * 4 * 5; // Max possible
-            const difficultyRatio = difficultyPoints / maxDifficultyPoints;
-            baseScore += difficultyRatio * 50;
+            // Component 4: Weighted difficulty score (up to +20 points)
+            const weightedRatio = weightedCorrect / maxWeightedScore;
+            iqScore += weightedRatio * 20;
 
-            // Completion bonus (±15 points)
-            const completionRatio = answeredQuestions / totalQuestions;
-            baseScore += completionRatio * 30;
+            // Component 5: Speed factor (±5 points)
+            if (avgTimePerQuestion > 0) {
+                if (avgTimePerQuestion < 10) {
+                    iqScore -= 5; // Too fast, likely guessing
+                } else if (avgTimePerQuestion >= 15 && avgTimePerQuestion <= 35) {
+                    iqScore += 5; // Optimal speed
+                } else if (avgTimePerQuestion > 50) {
+                    iqScore -= 2; // Too slow
+                }
+            }
 
-            // Speed multiplier
-            baseScore *= speedMultiplier;
-
-            // Bounds checking and rounding
-            let finalIQ = Math.round(baseScore);
+            // Bounds and rounding
+            let finalIQ = Math.round(iqScore);
             finalIQ = Math.max(60, Math.min(160, finalIQ));
 
             return {
                 iq: finalIQ,
                 correctCount,
                 answeredQuestions,
+                completionRate: (completionRate * 100).toFixed(1),
                 accuracy: (accuracy * 100).toFixed(1),
+                overallCorrectRate: (overallCorrectRate * 100).toFixed(1),
                 timeSpent,
                 avgTimePerQuestion: avgTimePerQuestion.toFixed(1),
-                difficultyPoints
+                weightedCorrect: Math.round(weightedCorrect)
             };
         }
 
@@ -821,15 +884,16 @@
             document.getElementById('percentile').textContent = getPercentileText(results.iq);
 
             // Update breakdown
-            document.getElementById('totalAnswered').textContent = results.answeredQuestions;
-            document.getElementById('correctAnswers').textContent = results.correctCount;
+            document.getElementById('totalAnswered').textContent = results.answeredQuestions + '/60';
+            document.getElementById('correctAnswers').textContent = results.correctCount + '/60';
             document.getElementById('accuracyRate').textContent = results.accuracy + '%';
+            document.getElementById('completionRate').textContent = results.completionRate + '%';
 
             const minutes = Math.floor(results.timeSpent / 60);
             const seconds = results.timeSpent % 60;
             document.getElementById('timeTaken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('avgTime').textContent = results.avgTimePerQuestion + 's';
-            document.getElementById('difficultyScore').textContent = results.difficultyPoints;
+            document.getElementById('difficultyScore').textContent = results.weightedCorrect;
             document.getElementById('finalIQ').textContent = results.iq;
 
             // Generate question review
@@ -846,13 +910,15 @@
 
                 const icon = isSkipped ? '○' : isCorrect ? '✓' : '✗';
                 const userAnswerText = isSkipped ? 'Skipped' : question.o[userAnswer];
+                const difficultyLabels = ['Easy', 'Medium', 'Hard', 'Expert'];
 
                 reviewItem.innerHTML = `
                     <div class="review-question">
                         <span class="icon">${icon}</span>
-                        Q${index + 1} [${['Easy','Medium','Hard','Expert'][question.d-1]}]: ${question.q.substring(0, 60)}${question.q.length > 60 ? '...' : ''}
+                        Q${index + 1} <span class="difficulty-badge difficulty-${['easy','medium','hard','expert'][question.d-1]}">${difficultyLabels[question.d-1]}</span>
                     </div>
                     <div class="review-answer">
+                        <strong>${question.q}</strong><br>
                         Your answer: ${userAnswerText}<br>
                         Correct answer: ${question.o[question.c]}<br>
                         <em>${question.e}</em>
