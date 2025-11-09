@@ -1093,54 +1093,65 @@
             // Step 2: Calculate percentage score
             const percentageScore = maxPossibleScore > 0 ? (rawScore / maxPossibleScore) * 100 : 0;
 
-            // Step 3: Time multiplier (only bonuses, never penalties)
+            // Step 3: Map percentage to BASE IQ (60-160)
+            let baseIQ;
+            if (percentageScore >= 95) {
+                // 95-100% = 145-160 IQ
+                baseIQ = 145 + ((percentageScore - 95) / 5) * 15;
+            } else if (percentageScore >= 85) {
+                // 85-95% = 130-145 IQ
+                baseIQ = 130 + ((percentageScore - 85) / 10) * 15;
+            } else if (percentageScore >= 70) {
+                // 70-85% = 115-130 IQ
+                baseIQ = 115 + ((percentageScore - 70) / 15) * 15;
+            } else if (percentageScore >= 50) {
+                // 50-70% = 100-115 IQ
+                baseIQ = 100 + ((percentageScore - 50) / 20) * 15;
+            } else if (percentageScore >= 30) {
+                // 30-50% = 85-100 IQ
+                baseIQ = 85 + ((percentageScore - 30) / 20) * 15;
+            } else if (percentageScore >= 15) {
+                // 15-30% = 70-85 IQ
+                baseIQ = 70 + ((percentageScore - 15) / 15) * 15;
+            } else {
+                // 0-15% = 60-70 IQ
+                baseIQ = 60 + (percentageScore / 15) * 10;
+            }
+
+            // Step 4: Time bonus (only for exceptional scores 90%+)
             const timeSpent = (25 * 60) - totalTimeSeconds;
             const timeMinutes = timeSpent / 60;
 
+            let timeBonus = 0;
             let timeMultiplier = 1.0;
-            if (timeMinutes <= 10) {
-                timeMultiplier = 1.20; // 20% bonus for <10 min
-            } else if (timeMinutes <= 12) {
-                timeMultiplier = 1.15; // 15% bonus for 10-12 min
-            } else if (timeMinutes <= 15) {
-                timeMultiplier = 1.10; // 10% bonus for 12-15 min
-            } else if (timeMinutes <= 18) {
-                timeMultiplier = 1.05; // 5% bonus for 15-18 min
-            } else {
-                timeMultiplier = 1.0; // No bonus after 18 min
+
+            // Time bonus ONLY applies to very high scorers (90%+)
+            if (percentageScore >= 90) {
+                if (timeMinutes <= 8) {
+                    timeBonus = 20; // +20 IQ for <8 min (superhuman)
+                    timeMultiplier = 1.20;
+                } else if (timeMinutes <= 10) {
+                    timeBonus = 15; // +15 IQ for 8-10 min
+                    timeMultiplier = 1.15;
+                } else if (timeMinutes <= 12) {
+                    timeBonus = 10; // +10 IQ for 10-12 min
+                    timeMultiplier = 1.10;
+                } else if (timeMinutes <= 15) {
+                    timeBonus = 5; // +5 IQ for 12-15 min
+                    timeMultiplier = 1.05;
+                } else {
+                    timeBonus = 0; // No bonus after 15 min
+                    timeMultiplier = 1.0;
+                }
             }
 
-            // Step 4: Calculate final score with time multiplier
-            const finalScore = percentageScore * timeMultiplier;
+            // Step 5: Calculate final IQ (can exceed 160!)
+            let iq = baseIQ + timeBonus;
 
-            // Step 5: Map to IQ scale (60-160)
-            // Using a curve that maps percentage to IQ
-            let iq;
-            if (finalScore >= 95) {
-                // 95-100%+ = 145-160 IQ
-                iq = 145 + ((finalScore - 95) / 5) * 15;
-            } else if (finalScore >= 85) {
-                // 85-95% = 130-145 IQ
-                iq = 130 + ((finalScore - 85) / 10) * 15;
-            } else if (finalScore >= 70) {
-                // 70-85% = 115-130 IQ
-                iq = 115 + ((finalScore - 70) / 15) * 15;
-            } else if (finalScore >= 50) {
-                // 50-70% = 100-115 IQ
-                iq = 100 + ((finalScore - 50) / 20) * 15;
-            } else if (finalScore >= 30) {
-                // 30-50% = 85-100 IQ
-                iq = 85 + ((finalScore - 30) / 20) * 15;
-            } else if (finalScore >= 15) {
-                // 15-30% = 70-85 IQ
-                iq = 70 + ((finalScore - 15) / 15) * 15;
-            } else {
-                // 0-15% = 60-70 IQ
-                iq = 60 + (finalScore / 15) * 10;
-            }
+            // Only apply lower bound, no upper cap
+            iq = Math.max(60, Math.round(iq));
 
-            // Cap at 60-160
-            iq = Math.max(60, Math.min(160, Math.round(iq)));
+            const finalScore = percentageScore; // Keep for display
 
             // Calculate accuracy for display
             const accuracy = answeredQuestions > 0 ? (correctCount / answeredQuestions) * 100 : 0;
