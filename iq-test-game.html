@@ -764,16 +764,24 @@
                         <div class="score-card-label">Correct Answers</div>
                     </div>
                     <div class="score-card">
-                        <div class="score-card-value" id="accuracyRate">0%</div>
-                        <div class="score-card-label">Accuracy Rate</div>
+                        <div class="score-card-value" id="rawScore">0</div>
+                        <div class="score-card-label">Raw Score</div>
                     </div>
                     <div class="score-card">
-                        <div class="score-card-value" id="completionRate">0%</div>
-                        <div class="score-card-label">Completion Rate</div>
+                        <div class="score-card-value" id="percentageScore">0%</div>
+                        <div class="score-card-label">Score Percentage</div>
                     </div>
                     <div class="score-card">
                         <div class="score-card-value" id="timeTaken">0:00</div>
                         <div class="score-card-label">Time Taken</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-card-value" id="timeMultiplier">×1.00</div>
+                        <div class="score-card-label">Time Bonus</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-card-value" id="finalScore">0%</div>
+                        <div class="score-card-label">Final Score</div>
                     </div>
                 </div>
 
@@ -1067,67 +1075,89 @@
             const answeredQuestions = userAnswers.filter(a => a !== null).length;
             const completionRate = answeredQuestions / totalQuestions;
 
+            // Step 1: Calculate weighted score based on correct answers
             let correctCount = 0;
-            let weightedCorrect = 0;
-            let maxWeightedScore = 0;
+            let rawScore = 0;
+            let maxPossibleScore = 0;
 
             userAnswers.forEach((answer, index) => {
                 const difficulty = questions[index].d;
-                maxWeightedScore += difficulty;
+                maxPossibleScore += difficulty;
+
                 if (answer !== null && answer === questions[index].c) {
                     correctCount++;
-                    weightedCorrect += difficulty;
+                    rawScore += difficulty;
                 }
             });
 
-            const accuracy = answeredQuestions > 0 ? correctCount / answeredQuestions : 0;
-            const overallCorrectRate = correctCount / totalQuestions;
+            // Step 2: Calculate percentage score
+            const percentageScore = maxPossibleScore > 0 ? (rawScore / maxPossibleScore) * 100 : 0;
+
+            // Step 3: Time multiplier (only bonuses, never penalties)
             const timeSpent = (25 * 60) - totalTimeSeconds;
-            const avgTimePerQuestion = answeredQuestions > 0 ? timeSpent / answeredQuestions : 0;
+            const timeMinutes = timeSpent / 60;
 
-            let iqScore = 70;
-
-            if (completionRate >= 0.95) iqScore += 30;
-            else if (completionRate >= 0.85) iqScore += 25;
-            else if (completionRate >= 0.75) iqScore += 18;
-            else if (completionRate >= 0.65) iqScore += 10;
-            else iqScore += completionRate * 10;
-
-            if (accuracy >= 0.98) iqScore += 35;
-            else if (accuracy >= 0.95) iqScore += 32;
-            else if (accuracy >= 0.90) iqScore += 27;
-            else if (accuracy >= 0.85) iqScore += 22;
-            else if (accuracy >= 0.80) iqScore += 17;
-            else if (accuracy >= 0.70) iqScore += 12;
-            else iqScore += accuracy * 15;
-
-            if (overallCorrectRate >= 0.90) iqScore += 30;
-            else if (overallCorrectRate >= 0.80) iqScore += 25;
-            else if (overallCorrectRate >= 0.70) iqScore += 20;
-            else if (overallCorrectRate >= 0.60) iqScore += 15;
-            else iqScore += overallCorrectRate * 20;
-
-            const weightedRatio = weightedCorrect / maxWeightedScore;
-            iqScore += weightedRatio * 20;
-
-            if (avgTimePerQuestion > 0) {
-                if (avgTimePerQuestion < 10) iqScore -= 5;
-                else if (avgTimePerQuestion >= 15 && avgTimePerQuestion <= 35) iqScore += 5;
-                else if (avgTimePerQuestion > 50) iqScore -= 2;
+            let timeMultiplier = 1.0;
+            if (timeMinutes <= 10) {
+                timeMultiplier = 1.20; // 20% bonus for <10 min
+            } else if (timeMinutes <= 12) {
+                timeMultiplier = 1.15; // 15% bonus for 10-12 min
+            } else if (timeMinutes <= 15) {
+                timeMultiplier = 1.10; // 10% bonus for 12-15 min
+            } else if (timeMinutes <= 18) {
+                timeMultiplier = 1.05; // 5% bonus for 15-18 min
+            } else {
+                timeMultiplier = 1.0; // No bonus after 18 min
             }
 
-            let finalIQ = Math.round(iqScore);
-            finalIQ = Math.max(60, Math.min(160, finalIQ));
+            // Step 4: Calculate final score with time multiplier
+            const finalScore = percentageScore * timeMultiplier;
+
+            // Step 5: Map to IQ scale (60-160)
+            // Using a curve that maps percentage to IQ
+            let iq;
+            if (finalScore >= 95) {
+                // 95-100%+ = 145-160 IQ
+                iq = 145 + ((finalScore - 95) / 5) * 15;
+            } else if (finalScore >= 85) {
+                // 85-95% = 130-145 IQ
+                iq = 130 + ((finalScore - 85) / 10) * 15;
+            } else if (finalScore >= 70) {
+                // 70-85% = 115-130 IQ
+                iq = 115 + ((finalScore - 70) / 15) * 15;
+            } else if (finalScore >= 50) {
+                // 50-70% = 100-115 IQ
+                iq = 100 + ((finalScore - 50) / 20) * 15;
+            } else if (finalScore >= 30) {
+                // 30-50% = 85-100 IQ
+                iq = 85 + ((finalScore - 30) / 20) * 15;
+            } else if (finalScore >= 15) {
+                // 15-30% = 70-85 IQ
+                iq = 70 + ((finalScore - 15) / 15) * 15;
+            } else {
+                // 0-15% = 60-70 IQ
+                iq = 60 + (finalScore / 15) * 10;
+            }
+
+            // Cap at 60-160
+            iq = Math.max(60, Math.min(160, Math.round(iq)));
+
+            // Calculate accuracy for display
+            const accuracy = answeredQuestions > 0 ? (correctCount / answeredQuestions) * 100 : 0;
+            const avgTimePerQuestion = answeredQuestions > 0 ? timeSpent / answeredQuestions : 0;
 
             return {
-                iq: finalIQ,
+                iq: iq,
                 correctCount,
                 answeredQuestions,
                 completionRate: (completionRate * 100).toFixed(1),
-                accuracy: (accuracy * 100).toFixed(1),
+                accuracy: accuracy.toFixed(1),
                 timeSpent,
                 avgTimePerQuestion: avgTimePerQuestion.toFixed(1),
-                weightedCorrect: Math.round(weightedCorrect)
+                rawScore: Math.round(rawScore),
+                percentageScore: percentageScore.toFixed(1),
+                timeMultiplier: timeMultiplier.toFixed(2),
+                finalScore: finalScore.toFixed(1)
             };
         }
 
@@ -1149,8 +1179,10 @@
             document.getElementById('iqScore').textContent = results.iq;
             document.getElementById('percentile').textContent = getPercentileText(results.iq);
             document.getElementById('correctAnswers').textContent = results.correctCount + '/60';
-            document.getElementById('accuracyRate').textContent = results.accuracy + '%';
-            document.getElementById('completionRate').textContent = results.completionRate + '%';
+            document.getElementById('rawScore').textContent = results.rawScore;
+            document.getElementById('percentageScore').textContent = results.percentageScore + '%';
+            document.getElementById('timeMultiplier').textContent = '×' + results.timeMultiplier;
+            document.getElementById('finalScore').textContent = results.finalScore + '%';
 
             const minutes = Math.floor(results.timeSpent / 60);
             const seconds = results.timeSpent % 60;
